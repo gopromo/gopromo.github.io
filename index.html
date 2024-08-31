@@ -4,11 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Professional Webpage</title>
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
         body {
-            background-color: #000000e5;
-            color: #333333;
-            font-family: Arial, sans-serif;
+            background-color: #000000;
+            color: #FFFFFF;
+            font-family: 'Courier Prime', monospace;
             margin: 0;
             padding: 0;
             display: flex;
@@ -18,57 +20,75 @@
         }
         .container {
             text-align: center;
-            background-color: #4a4a4a;
-            border-radius: 20px;
+            background-color: #000000;
+            border: 1px solid #FFFFFF;
+            border-radius: 10px;
             padding: 30px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
         }
         h1 {
             font-size: 2.5em;
-            margin-bottom: 20px;
-            color: #ffffff;
+            margin-bottom: 40px; /* Increased spacing after the heading */
+            color: #FFFFFF;
         }
         p {
             font-size: 1.2em;
             line-height: 1.6;   
             max-width: 600px;
-            color: #fcfcfc;
+            color: #FFFFFF;
+            margin: 40px auto; /* Added top and bottom margin for spacing */
+            text-align: center; /* Ensure text within paragraph is centered */
         }
         button {
-            background-color: #ffffff;
-            color: #000000;
+            background-color: transparent;
+            color: #FFFFFF;
             border: none;
-            padding: 10px 20px;
-            font-size: 1em;
+            font-size: 1.5em;
             cursor: pointer;
-            margin-top: 20px;
             margin-right: 10px;
-            border-radius: 5px;
         }
         button:hover {
-            background-color: #cccccc;
+            color: #CCCCCC;
         }
-        .quirky-animation {
-            width: 100px;
-            height: 100px;
-            background-color: #ff6b6b;
-            border-radius: 50%;
-            margin: 0 auto 20px;
-            animation: bounce 2s infinite;
+        progress {
+            width: calc(100% - 40px);
+            height: 20px;
+            -webkit-appearance: none;
+            appearance: none;
+            vertical-align: middle;
         }
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
+        progress::-webkit-progress-bar {
+            background-color: #000000;
+            border: 1px solid #FFFFFF;
+            border-radius: 10px;
+        }
+        progress::-webkit-progress-value {
+            background-color: #FFFFFF;
+            border-radius: 10px;
+        }
+        progress::-moz-progress-bar {
+            background-color: #FFFFFF;
+            border-radius: 10px;
+        }
+        .audio-control {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="quirky-animation"></div>
         <h1>Welcome to Our Professional Website</h1>
-        <p>This is a sample text message showcasing a clean, professional design with a grey background and centered content. Feel free to customize this message to suit your needs.</p>
-        <button onclick="playAudio('myAudio')">Play Audio 1</button>
-        <button onclick="playAudio('myAudio2')">Play Audio 2</button>
+        <p>This is a sample text message showcasing a clean, professional design with a black background and white text. Feel free to customize this message to suit your needs.</p>
+        <div class="audio-control">
+            <button onclick="playAudio('myAudio')"><i class="fas fa-play"></i></button>
+            <progress id="progressBar1" value="0" max="100"></progress>
+        </div>
+        <div class="audio-control">
+            <button onclick="playAudio('myAudio2')"><i class="fas fa-play"></i></button>
+            <progress id="progressBar2" value="0" max="100"></progress>
+        </div>
         <audio id="myAudio">
             <source src="test.mp3" type="audio/mpeg">
             Your browser does not support the audio element.
@@ -81,7 +101,17 @@
     <script>
         function playAudio(audioId) {
             var audio = document.getElementById(audioId);
-            audio.play();
+            var button = event.currentTarget;
+            var icon = button.querySelector('i');
+            if (audio.paused) {
+                audio.play();
+                icon.classList.remove('fa-play');
+                icon.classList.add('fa-pause');
+            } else {
+                audio.pause();
+                icon.classList.remove('fa-pause');
+                icon.classList.add('fa-play');
+            }
         }
     </script>
 </body>
@@ -89,56 +119,29 @@
     document.addEventListener('DOMContentLoaded', function() {
         var audios = [document.getElementById("myAudio"), document.getElementById("myAudio2")];
         var playButtons = document.querySelectorAll('button');
-        var timeDisplays = [];
-        var progressBars = [];
+        var progressBars = [document.getElementById("progressBar1"), document.getElementById("progressBar2")];
 
-        audios.forEach((audio, index) => {
-            var timeDisplay = document.createElement('div');
-            var progressBar = document.createElement('progress');
-            
-            timeDisplay.id = 'timeDisplay' + (index + 1);
-            progressBar.id = 'progressBar' + (index + 1);
-            progressBar.value = 0;
-            progressBar.max = 100;
-
-            document.querySelector('.container').appendChild(timeDisplay);
-            document.querySelector('.container').appendChild(progressBar);
-
-            timeDisplays.push(timeDisplay);
-            progressBars.push(progressBar);
-        });
-
-        function formatTime(seconds) {
-            var minutes = Math.floor(seconds / 60);
-            var remainingSeconds = Math.floor(seconds % 60);
-            return minutes + ":" + (remainingSeconds < 10 ? "0" : "") + remainingSeconds;
-        }
-
-        function updateTimeDisplay(index) {
-            var currentTime = formatTime(audios[index].currentTime);
-            var duration = formatTime(audios[index].duration);
-            timeDisplays[index].textContent = currentTime + " / " + duration;
+        function updateProgressBar(index) {
             progressBars[index].value = (audios[index].currentTime / audios[index].duration) * 100;
         }
 
         audios.forEach((audio, index) => {
-            audio.addEventListener('loadedmetadata', function() {
-                updateTimeDisplay(index);
-            });
-
             audio.addEventListener('timeupdate', function() {
-                updateTimeDisplay(index);
+                updateProgressBar(index);
             });
         });
 
         playButtons.forEach((button, index) => {
             button.onclick = function() {
+                var icon = button.querySelector('i');
                 if (audios[index].paused) {
                     audios[index].play();
-                    button.textContent = 'Pause Audio ' + (index + 1);
+                    icon.classList.remove('fa-play');
+                    icon.classList.add('fa-pause');
                 } else {
                     audios[index].pause();
-                    button.textContent = 'Play Audio ' + (index + 1);
+                    icon.classList.remove('fa-pause');
+                    icon.classList.add('fa-play');
                 }
             };
         });
