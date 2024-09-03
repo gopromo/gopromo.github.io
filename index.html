@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Professional Webpage</title>
-    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
         body {
             background-color: #000000;
-            color: #FFFFFF;
-            font-family: 'Courier Prime', monospace;
+            color: #C8AE7E;
+            font-family: 'Alegreya', serif;
             margin: 0;
             padding: 0;
             display: flex;
@@ -21,82 +21,126 @@
         .container {
             text-align: center;
             background-color: #000000;
-            border: 1px solid #FFFFFF;
-            border-radius: 10px;
             padding: 30px;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
         }
         h1 {
-            font-size: 2.5em;
-            margin-bottom: 40px; /* Increased spacing after the heading */
-            color: #FFFFFF;
+            font-size: 3.5em;
+            margin-bottom: 40px;
+            color: #C8AE7E;
+            letter-spacing: 0.05em;
         }
         p {
             font-size: 1.2em;
             line-height: 1.6;   
-            max-width: 600px;
-            color: #FFFFFF;
-            margin: 40px auto; /* Added top and bottom margin for spacing */
-            text-align: center; /* Ensure text within paragraph is centered */
+            max-width: 800px;
+            color: #C8AE7E;
+            margin: 40px auto;
+            text-align: center;
         }
         button {
             background-color: transparent;
-            color: #FFFFFF;
+            color: #C8AE7E;
             border: none;
-            font-size: 1.5em;
+            font-size: 1em;
             cursor: pointer;
             margin-right: 10px;
         }
         button:hover {
-            color: #CCCCCC;
+            color: #A08C64;
+        }
+        .progress-container {
+            position: relative;
+            width: calc(100% - 40px);
+            height: 30px;
+            display: inline-block;
+            vertical-align: middle;
         }
         progress {
-            width: calc(100% - 40px);
-            height: 20px;
+            width: 100%;
+            height: 100%;
             -webkit-appearance: none;
             appearance: none;
-            vertical-align: middle;
         }
         progress::-webkit-progress-bar {
             background-color: #000000;
-            border: 1px solid #FFFFFF;
-            border-radius: 10px;
+            border: 1px solid #C8AE7E;
+            border-radius: 15px;
         }
         progress::-webkit-progress-value {
-            background-color: #FFFFFF;
-            border-radius: 10px;
+            background-color: #C8AE7E;
+            border-radius: 15px;
         }
         progress::-moz-progress-bar {
-            background-color: #FFFFFF;
-            border-radius: 10px;
+            background-color: #C8AE7E;
+            border-radius: 15px;
+        }
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #000000;
+            font-size: 0.8em;
         }
         .audio-control {
             display: flex;
             align-items: center;
             margin-bottom: 10px;
         }
+        .separator {
+            border: none;
+            border-top: 1px solid #C8AE7E;
+            margin: 20px auto;
+            width: 80%;
+        }
+        .crown {
+            font-size: 4em;
+            color: #C8AE7E;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Welcome to Our Professional Website</h1>
-        <p>This is a sample text message showcasing a clean, professional design with a black background and white text. Feel free to customize this message to suit your needs.</p>
+        <h1>Voice Of Fire</h1>
+        <hr class="separator">
+        <p>Wyrd, The Earth Pristine - A Place Which Does Not Exist Where I Belong</p>
+        <hr class="separator">
         <div class="audio-control">
             <button onclick="playAudio('myAudio')"><i class="fas fa-play"></i></button>
-            <progress id="progressBar1" value="0" max="100"></progress>
+            <div class="progress-container">
+                <progress id="progressBar1" value="0" max="100"></progress>
+                <span class="progress-text">Track 1</span>
+            </div>
         </div>
         <div class="audio-control">
             <button onclick="playAudio('myAudio2')"><i class="fas fa-play"></i></button>
-            <progress id="progressBar2" value="0" max="100"></progress>
+            <div class="progress-container">
+                <progress id="progressBar2" value="0" max="100"></progress>
+                <span class="progress-text">Track 2</span>
+            </div>
         </div>
-        <audio id="myAudio">
+        <div class="audio-control">
+            <button onclick="playAudio('myAudio3')"><i class="fas fa-play"></i></button>
+            <div class="progress-container">
+                <progress id="progressBar3" value="0" max="100"></progress>
+                <span class="progress-text">Theme</span>
+            </div>
+        </div>
+        <audio id="myAudio" loop>
             <source src="test.mp3" type="audio/mpeg">
             Your browser does not support the audio element.
         </audio>
-        <audio id="myAudio2">
+        <audio id="myAudio2" loop>
             <source src="test2.mp3" type="audio/mpeg">
             Your browser does not support the audio element.
         </audio>
+        <audio id="myAudio3" loop>
+            <source src="theme.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+        <hr class="separator">
+        <div class="crown">&#9813;</div>
     </div>
     <script>
         function playAudio(audioId) {
@@ -117,9 +161,9 @@
 </body>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        var audios = [document.getElementById("myAudio"), document.getElementById("myAudio2")];
+        var audios = [document.getElementById("myAudio"), document.getElementById("myAudio2"), document.getElementById("myAudio3")];
         var playButtons = document.querySelectorAll('button');
-        var progressBars = [document.getElementById("progressBar1"), document.getElementById("progressBar2")];
+        var progressBars = [document.getElementById("progressBar1"), document.getElementById("progressBar2"), document.getElementById("progressBar3")];
 
         function updateProgressBar(index) {
             progressBars[index].value = (audios[index].currentTime / audios[index].duration) * 100;
