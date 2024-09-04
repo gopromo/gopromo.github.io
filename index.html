@@ -40,11 +40,15 @@
         }
         button {
             background-color: transparent;
-            color: #C8AE7E;
+            color: #FFFFFF;
             border: none;
             font-size: 1em;
             cursor: pointer;
-            margin-right: 10px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
         }
         button:hover {
             color: #A08C64;
@@ -55,6 +59,7 @@
             height: 30px;
             display: inline-block;
             vertical-align: middle;
+            margin: 0 auto;
         }
         progress {
             width: 100%;
@@ -64,8 +69,6 @@
         }
         progress::-webkit-progress-bar {
             background-color: #000000;
-            border: 1px solid #C8AE7E;
-            border-radius: 15px;
         }
         progress::-webkit-progress-value {
             background-color: #C8AE7E;
@@ -86,6 +89,7 @@
         .audio-control {
             display: flex;
             align-items: center;
+            justify-content: center;
             margin-bottom: 10px;
         }
         .separator {
@@ -104,31 +108,31 @@
 <body>
     <div class="container">
         <div class="sun">&#9677;</div>
-        <h1>Voice Of Fire</h1>
+        <h1>The Sunforge</h1>
         <hr class="separator">
         <p>Wyrd, The Earth Pristine - A Place Which Does Not Exist Where I Belong</p>
         <p>Under The Hidden Places Of The World</p>
         <p>All Fires Have Forged Me</p>
         <hr class="separator">
         <div class="audio-control" style="display: none;">
-            <button onclick="playAudio('myAudio')"><i class="fas fa-play"></i></button>
             <div class="progress-container">
                 <progress id="progressBar1" value="0" max="100"></progress>
+                <button onclick="playAudio('myAudio')"><i class="fas fa-play"></i></button>
                 <span class="progress-text">Track 1</span>
             </div>
         </div>
         <div class="audio-control" style="display: none;">
-            <button onclick="playAudio('myAudio2')"><i class="fas fa-play"></i></button>
             <div class="progress-container">
                 <progress id="progressBar2" value="0" max="100"></progress>
+                <button onclick="playAudio('myAudio2')"><i class="fas fa-play"></i></button>
                 <span class="progress-text">Track 2</span>
             </div>
         </div>
         <div class="audio-control">
-            <button onclick="playAudio('myAudio3')"><i class="fas fa-play"></i></button>
             <div class="progress-container">
                 <progress id="progressBar3" value="0" max="100"></progress>
-                <span class="progress-text">Know</span>
+                <button onclick="playAudio('myAudio3')"><i class="fas fa-play"></i></button>
+                <span class="progress-text"></span>
             </div>
         </div>
         <audio id="myAudio" loop>
