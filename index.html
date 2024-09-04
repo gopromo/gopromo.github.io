@@ -94,27 +94,28 @@
             margin: 20px auto;
             width: 80%;
         }
-        .crown {
+        .crown, .sun {
             font-size: 4em;
             color: #C8AE7E;
-            margin-top: 20px;
+            margin: 20px 0;
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <div class="sun">&#9677;</div>
         <h1>Voice Of Fire</h1>
         <hr class="separator">
         <p>Wyrd, The Earth Pristine - A Place Which Does Not Exist Where I Belong</p>
         <hr class="separator">
-        <div class="audio-control">
+        <div class="audio-control" style="display: none;">
             <button onclick="playAudio('myAudio')"><i class="fas fa-play"></i></button>
             <div class="progress-container">
                 <progress id="progressBar1" value="0" max="100"></progress>
                 <span class="progress-text">Track 1</span>
             </div>
         </div>
-        <div class="audio-control">
+        <div class="audio-control" style="display: none;">
             <button onclick="playAudio('myAudio2')"><i class="fas fa-play"></i></button>
             <div class="progress-container">
                 <progress id="progressBar2" value="0" max="100"></progress>
@@ -125,7 +126,7 @@
             <button onclick="playAudio('myAudio3')"><i class="fas fa-play"></i></button>
             <div class="progress-container">
                 <progress id="progressBar3" value="0" max="100"></progress>
-                <span class="progress-text">Theme</span>
+                <span class="progress-text">Know</span>
             </div>
         </div>
         <audio id="myAudio" loop>
