@@ -138,8 +138,23 @@
         }
         .fx-control {
             height: 30px;
-            background-color: #333;
             width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .fx-toggle {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #000000;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .fx-toggle i {
+            font-size: 1em;
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
@@ -187,6 +202,7 @@ class Aunode {
         this.startTime = 0;
         this.pauseTime = 0;
         this.isLoading = true;
+        this.fxEnabled = false;
         this.createUI();
         this.setupEventListeners();
         this.loadAudio();
@@ -211,7 +227,9 @@ class Aunode {
                 </div>
                 <div class="control">
                     <span class="control-label">FX</span>
-                    <div class="fx-control"></div>
+                    <div class="fx-control">
+                        <button class="fx-toggle"><i class="fas fa-power-off"></i></button>
+                    </div>
                 </div>
                 <div class="control">
                     <span class="control-label">Pan</span>
@@ -232,6 +250,7 @@ class Aunode {
         this.progressBarRight = container.querySelector('.progress-bar-right');
         this.volumeControl = container.querySelector('.volume');
         this.panControl = container.querySelector('.pan');
+        this.fxToggle = container.querySelector('.fx-toggle');
     }
 
     setupEventListeners() {
@@ -242,6 +261,7 @@ class Aunode {
         });
         this.volumeControl.addEventListener('input', (e) => this.setVolume(e.target.value));
         this.panControl.addEventListener('input', (e) => this.setPan(e.target.value));
+        this.fxToggle.addEventListener('click', () => this.toggleFX());
     }
 
     loadAudio() {
@@ -296,6 +316,13 @@ class Aunode {
     setPan(pan) {
         const panValue = parseFloat(pan);
         this.sound.stereo(panValue);
+    }
+
+    toggleFX() {
+        this.fxEnabled = !this.fxEnabled;
+        this.fxToggle.innerHTML = this.fxEnabled ? '<i class="fas fa-power-off" style="color: #C8AE7E;"></i>' : '<i class="fas fa-power-off"></i>';
+        console.log(`FX ${this.fxEnabled ? 'enabled' : 'disabled'}`);
+        // Add your FX logic here
     }
 
     updateProgressBar() {
