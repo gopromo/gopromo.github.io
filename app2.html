@@ -114,15 +114,30 @@
             margin: 0 10px;
             color: #FFFFFF;
         }
-        label {
-            color: #FFFFFF;
-            margin: 10px 0;
-            display: block;
+        .control-group {
+            display: flex;
+            justify-content: space-between;
             width: 100%;
+            margin-top: 20px;
+        }
+        .control {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 30%;
+        }
+        .control-label {
+            color: #FFFFFF;
+            margin-bottom: 5px;
         }
         input[type="range"] {
             width: 100%;
             margin: 10px 0;
+        }
+        .fx-control {
+            height: 30px;
+            background-color: #333;
+            width: 100%;
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
@@ -167,8 +182,9 @@ class Aunode {
         this.isLast = isLast;
         this.isPlaying = false;
         this.player = new Tone.Player().toDestination();
-        this.volume = new Tone.Volume(0);
-        this.player.chain(this.volume, Tone.Destination);
+        this.volume = new Tone.Volume(0).toDestination();
+        this.panner = new Tone.Panner(0);
+        this.player.chain(this.volume, this.panner, Tone.Destination);
         this.startTime = 0;
         this.pauseTime = 0;
         this.isLoading = true;
@@ -189,7 +205,20 @@ class Aunode {
                     <div class="progress-bar-right"></div>
                 </div>
             </div>
-            <label>Volume: <input type="range" class="volume" min="-60" max="0" step="1" value="0"></label>
+            <div class="control-group">
+                <div class="control">
+                    <span class="control-label">Volume</span>
+                    <input type="range" class="volume" min="0" max="1" step="0.01" value="1">
+                </div>
+                <div class="control">
+                    <span class="control-label">FX</span>
+                    <div class="fx-control"></div>
+                </div>
+                <div class="control">
+                    <span class="control-label">Pan</span>
+                    <input type="range" class="pan" min="-1" max="1" step="0.1" value="0">
+                </div>
+            </div>
         `;
         document.getElementById('aunode-instances').appendChild(container);
 
@@ -203,6 +232,7 @@ class Aunode {
         this.progressBarLeft = container.querySelector('.progress-bar-left');
         this.progressBarRight = container.querySelector('.progress-bar-right');
         this.volumeControl = container.querySelector('.volume');
+        this.panControl = container.querySelector('.pan');
     }
 
     setupEventListeners() {
@@ -212,6 +242,7 @@ class Aunode {
             }
         });
         this.volumeControl.addEventListener('input', (e) => this.setVolume(e.target.value));
+        this.panControl.addEventListener('input', (e) => this.setPan(e.target.value));
     }
 
     loadAudio() {
@@ -257,7 +288,18 @@ class Aunode {
     }
 
     setVolume(volume) {
-        this.volume.volume.value = parseFloat(volume);
+        const volumeValue = parseFloat(volume);
+        if (volumeValue === 0) {
+            this.volume.mute = true;
+        } else {
+            this.volume.mute = false;
+            this.volume.volume.value = Tone.gainToDb(volumeValue);
+        }
+        console.log(`Volume set to: ${volumeValue}, dB: ${this.volume.volume.value}`);
+    }
+
+    setPan(pan) {
+        this.panner.pan.value = parseFloat(pan);
     }
 
     updateProgressBar() {
@@ -286,9 +328,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
     console.log("DOM fully loaded");
     try {
         // Instantiate instances of Aunode
-        const aunode1 = new Aunode("File1", "C:\\Users\\ANON\\Desktop\\Audio\\theme.mp3", false);
-        const aunode2 = new Aunode("Choir Vibe", "C:\\Users\\ANON\\Desktop\\Audio\\test.mp3", false);
-        const aunode3 = new Aunode("Bells Vibe", "C:\\Users\\ANON\\Desktop\\Audio\\test2.mp3", true);
+        const aunode1 = new Aunode("File1", "C:\\Audio\\theme.mp3", false);
+        const aunode2 = new Aunode("Choir Vibe", "C:\\Audio\\test.mp3", false);
+        const aunode3 = new Aunode("Bells Vibe", "C:\\Audio\\test2.mp3", true);
 
         console.log("Aunode instances created:", aunode1, aunode2, aunode3);
     } catch (error) {
