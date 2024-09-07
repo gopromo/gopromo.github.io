@@ -19,20 +19,26 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
         }
         .aunode-container {
             margin: 20px;
             padding: 10px;
             text-align: center;
             background-color: #000000;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .aunode-separator {
             border: none;
             border-top: 1.5px solid #C8AE7E;
             margin: 30px 0;
-            width: 150%;
-            left: -25%;
-            position: relative;
+            width: 100%;
         }
         h3 {
             font-size: 1.5em;
@@ -51,40 +57,49 @@
         }
         .progress-container {
             position: relative;
-            width: calc(100% - 40px);
-            height: 30px;
-            display: inline-block;
-            vertical-align: middle;
-            margin: 0 auto;
-        }
-        .progress-bar {
             width: 100%;
+            height: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            background-color: #333333;
+        }
+        .progress-bar-left,
+        .progress-bar-right {
+            width: calc(50% - 15px);
             height: 100%;
-            -webkit-appearance: none;
-            appearance: none;
+            background-color: #333333;
+            position: relative;
+            overflow: hidden;
         }
-        .progress-bar::-webkit-progress-bar {
-            background-color: #000000;
-        }
-        .progress-bar::-webkit-progress-value {
+        .progress-bar-left::after,
+        .progress-bar-right::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            height: 100%;
             background-color: #C8AE7E;
-            border-radius: 15px;
+            transition: width 0.1s linear;
         }
-        .progress-bar::-moz-progress-bar {
-            background-color: #C8AE7E;
-            border-radius: 15px;
+        .progress-bar-left::after {
+            right: 0;
+            width: var(--progress, 0%);
+        }
+        .progress-bar-right::after {
+            left: 0;
+            width: var(--progress, 0%);
         }
         .play-pause {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 10;
             width: 30px;
             height: 30px;
             display: flex;
             justify-content: center;
             align-items: center;
+            background-color: #000000;
+            border-radius: 50%;
+            margin: 0 5px;
+            z-index: 1;
         }
         .play-pause i {
             font-size: 1em;
@@ -94,6 +109,7 @@
             align-items: center;
             justify-content: center;
             margin-bottom: 10px;
+            width: 100%;
         }
         .display-name {
             display: inline-block;
@@ -104,6 +120,7 @@
             color: #FFFFFF;
             margin: 10px 0;
             display: block;
+            width: 100%;
         }
         input[type="range"] {
             width: 100%;
@@ -114,7 +131,27 @@
             100% { transform: rotate(360deg); }
         }
         .loading {
-            animation: spin 2s linear infinite;
+            width: 20px;
+            height: 20px;
+            position: relative;
+            animation: spin 1s linear infinite;
+        }
+        .loading::before,
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 6px;
+            height: 6px;
+            background-color: #FFFFFF;
+            border-radius: 50%;
+        }
+        .loading::before {
+            transform: translate(-8px, -50%);
+        }
+        .loading::after {
+            transform: translate(2px, -50%);
         }
     </style>
 </head>
@@ -149,8 +186,9 @@ class Aunode {
             <h3>${this.DisplayName}</h3>
             <div class="audio-control">
                 <div class="progress-container">
-                    <progress class="progress-bar" value="0" max="100"></progress>
-                    <button class="play-pause"><i class="fas fa-spinner loading"></i></button>
+                    <div class="progress-bar-left"></div>
+                    <button class="play-pause"><div class="loading"></div></button>
+                    <div class="progress-bar-right"></div>
                 </div>
             </div>
             <label>Volume: <input type="range" class="volume" min="-60" max="0" step="1" value="0"></label>
@@ -164,7 +202,8 @@ class Aunode {
         }
 
         this.playPauseButton = container.querySelector('.play-pause');
-        this.progressBar = container.querySelector('.progress-bar');
+        this.progressBarLeft = container.querySelector('.progress-bar-left');
+        this.progressBarRight = container.querySelector('.progress-bar-right');
         this.volumeControl = container.querySelector('.volume');
     }
 
@@ -227,14 +266,18 @@ class Aunode {
         if (this.isPlaying) {
             const elapsed = Tone.now() - this.startTime;
             const progress = (elapsed / this.player.buffer.duration) * 100;
-            this.progressBar.value = progress;
-
+            
+            this.progressBarLeft.style.setProperty('--progress', `${progress}%`);
+            this.progressBarRight.style.setProperty('--progress', `${progress}%`);
+            
             if (progress < 100) {
                 requestAnimationFrame(() => this.updateProgressBar());
             } else {
                 this.isPlaying = false;
                 this.playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
                 this.pauseTime = 0;
+                this.progressBarLeft.style.setProperty('--progress', '0%');
+                this.progressBarRight.style.setProperty('--progress', '0%');
             }
         }
     }
