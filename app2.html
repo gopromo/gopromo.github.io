@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.8em%22 font-size=%22100%22 fill=%22%23FFFFFF%22>&#9813;</text></svg>">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
     <style>
         body {
             background-color: #000000;
@@ -70,6 +70,7 @@
             height: 100%;
             position: relative;
             overflow: hidden;
+            border-radius: 4px;
         }
         .progress-bar-left::after,
         .progress-bar-right::after {
@@ -79,6 +80,7 @@
             height: 100%;
             background-color: #C8AE7E;
             transition: width 0.1s linear;
+            border-radius: 4px;
         }
         .progress-bar-left::after {
             right: 0;
@@ -181,10 +183,7 @@ class Aunode {
         this.SourceFile = SourceFile;
         this.isLast = isLast;
         this.isPlaying = false;
-        this.player = new Tone.Player().toDestination();
-        this.volume = new Tone.Volume(0).toDestination();
-        this.panner = new Tone.Panner(0);
-        this.player.chain(this.volume, this.panner, Tone.Destination);
+        this.sound = null;
         this.startTime = 0;
         this.pauseTime = 0;
         this.isLoading = true;
@@ -246,17 +245,19 @@ class Aunode {
     }
 
     loadAudio() {
-        this.player.load(this.SourceFile)
-            .then(() => {
+        this.sound = new Howl({
+            src: [this.SourceFile],
+            onload: () => {
                 console.log(`Audio ${this.SourceFile} loaded successfully`);
                 this.isLoading = false;
                 this.playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
-            })
-            .catch(error => {
+            },
+            onloaderror: (id, error) => {
                 console.error(`Error loading audio ${this.SourceFile}:`, error);
                 this.isLoading = false;
                 this.playPauseButton.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
-            });
+            }
+        });
     }
 
     togglePlayPause() {
@@ -268,44 +269,40 @@ class Aunode {
     }
 
     play() {
-        Tone.start();
-        if (this.player.state === "stopped") {
-            this.player.start(0, this.pauseTime);
+        if (!this.sound.playing()) {
+            this.sound.play();
         } else {
-            this.player.start();
+            this.sound.seek(this.pauseTime);
         }
-        this.startTime = Tone.now() - this.pauseTime;
+        this.startTime = Date.now() / 1000 - this.pauseTime;
         this.isPlaying = true;
         this.playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
         this.updateProgressBar();
     }
 
     pause() {
-        this.player.stop();
-        this.pauseTime = Tone.now() - this.startTime;
+        this.sound.pause();
+        this.pauseTime = this.sound.seek();
         this.isPlaying = false;
         this.playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
     }
 
     setVolume(volume) {
         const volumeValue = parseFloat(volume);
-        if (volumeValue === 0) {
-            this.volume.mute = true;
-        } else {
-            this.volume.mute = false;
-            this.volume.volume.value = Tone.gainToDb(volumeValue);
-        }
-        console.log(`Volume set to: ${volumeValue}, dB: ${this.volume.volume.value}`);
+        this.sound.volume(volumeValue);
+        console.log(`Volume set to: ${volumeValue}`);
     }
 
     setPan(pan) {
-        this.panner.pan.value = parseFloat(pan);
+        const panValue = parseFloat(pan);
+        this.sound.stereo(panValue);
     }
 
     updateProgressBar() {
         if (this.isPlaying) {
-            const elapsed = Tone.now() - this.startTime;
-            const progress = (elapsed / this.player.buffer.duration) * 100;
+            const elapsed = this.sound.seek();
+            const duration = this.sound.duration();
+            const progress = (elapsed / duration) * 100;
             
             this.progressBarLeft.style.setProperty('--progress', `${progress}%`);
             this.progressBarRight.style.setProperty('--progress', `${progress}%`);
