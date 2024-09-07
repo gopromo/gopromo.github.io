@@ -80,6 +80,14 @@
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 10;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .play-pause i {
+            font-size: 1em;
         }
         .audio-control {
             display: flex;
@@ -101,6 +109,14 @@
             width: 100%;
             margin: 10px 0;
         }
+        @keyframes pulse {
+            0% { transform: scale(0.95); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(0.95); }
+        }
+        .loading {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
     </style>
 </head>
 <body>
@@ -121,7 +137,7 @@ class Aunode {
         this.player.chain(this.volume, Tone.Destination);
         this.startTime = 0;
         this.pauseTime = 0;
-        this.status = 'Loading...';
+        this.isLoading = true;
         this.createUI();
         this.setupEventListeners();
         this.loadAudio();
@@ -135,11 +151,10 @@ class Aunode {
             <div class="audio-control">
                 <div class="progress-container">
                     <progress class="progress-bar" value="0" max="100"></progress>
-                    <button class="play-pause"><i class="fas fa-play"></i></button>
+                    <button class="play-pause"><i class="fas fa-circle-notch fa-spin"></i></button>
                 </div>
             </div>
             <label>Volume: <input type="range" class="volume" min="-60" max="0" step="1" value="0"></label>
-            <p class="status">${this.status}</p>
         `;
         document.getElementById('aunode-instances').appendChild(container);
 
@@ -152,11 +167,14 @@ class Aunode {
         this.playPauseButton = container.querySelector('.play-pause');
         this.progressBar = container.querySelector('.progress-bar');
         this.volumeControl = container.querySelector('.volume');
-        this.statusElement = container.querySelector('.status');
     }
 
     setupEventListeners() {
-        this.playPauseButton.addEventListener('click', () => this.togglePlayPause());
+        this.playPauseButton.addEventListener('click', () => {
+            if (!this.isLoading) {
+                this.togglePlayPause();
+            }
+        });
         this.volumeControl.addEventListener('input', (e) => this.setVolume(e.target.value));
     }
 
@@ -164,13 +182,13 @@ class Aunode {
         this.player.load(this.SourceFile)
             .then(() => {
                 console.log(`Audio ${this.SourceFile} loaded successfully`);
-                this.status = 'Ready to play';
-                this.statusElement.textContent = this.status;
+                this.isLoading = false;
+                this.playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
             })
             .catch(error => {
                 console.error(`Error loading audio ${this.SourceFile}:`, error);
-                this.status = `Error: ${error.message}`;
-                this.statusElement.textContent = this.status;
+                this.isLoading = false;
+                this.playPauseButton.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
             });
     }
 
