@@ -400,11 +400,25 @@ class Aunode {
     }
 }
 
+class Vibe {
+    constructor(DisplayName) {
+        this.DisplayName = DisplayName;
+        this.aunodes = [];
+    }
+
+    addAunode(aunode) {
+        this.aunodes.push(aunode);
+    }
+}
+
 // Modify the DOMContentLoaded event listener
 document.addEventListener('DOMContentLoaded', (event) => {
     console.log("DOM fully loaded");
     try {
-        // Instantiate instances of Aunode
+        // Create a Vibe instance
+        const mainVibe = new Vibe("Main Vibe");
+
+        // Instantiate instances of Aunode and add them to the Vibe
         const aunode1 = new Aunode("File1", "C:\\Audio\\theme.mp3", false);
         const aunode2 = new Aunode("Choir Vibe", "C:\\Audio\\test.mp3", false);
         const aunode3 = new Aunode("Bells Vibe", "C:\\Audio\\test2.mp3", true);
