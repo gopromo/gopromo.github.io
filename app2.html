@@ -187,14 +187,6 @@
         .loading::after {
             transform: translate(2px, -50%);
         }
-        .fade-controls {
-            opacity: 1;
-            transition: opacity 0.3s ease;
-        }
-        .fade-controls.disabled {
-            opacity: 0.5;
-            pointer-events: none;
-        }
     </style>
 </head>
 <body>
@@ -261,24 +253,6 @@ class Aunode {
                         <input type="range" class="pan" min="-1" max="1" step="0.1" value="0">
                     </div>
                 </div>
-                <div class="control-row fade-controls">
-                    <div class="control-cell">
-                        <span class="control-label">Fadein</span>
-                    </div>
-                    <div class="control-cell">
-                        <span class="control-label">Fadeout</span>
-                    </div>
-                    <div class="control-cell"></div>
-                </div>
-                <div class="control-row fade-controls">
-                    <div class="control-cell">
-                        <input type="range" class="fadein" min="0" max="10" step="0.1" value="0">
-                    </div>
-                    <div class="control-cell">
-                        <input type="range" class="fadeout" min="0" max="10" step="0.1" value="0">
-                    </div>
-                    <div class="control-cell"></div>
-                </div>
             </div>
         `;
         document.getElementById('aunode-instances').appendChild(container);
@@ -295,9 +269,6 @@ class Aunode {
         this.volumeControl = container.querySelector('.volume');
         this.panControl = container.querySelector('.pan');
         this.fxToggle = container.querySelector('.fx-toggle');
-        this.fadeInControl = container.querySelector('.fadein');
-        this.fadeOutControl = container.querySelector('.fadeout');
-        this.fadeControls = container.querySelectorAll('.fade-controls');
     }
 
     createReverb() {
@@ -329,8 +300,6 @@ class Aunode {
         this.volumeControl.addEventListener('input', (e) => this.setVolume(e.target.value));
         this.panControl.addEventListener('input', (e) => this.setPan(e.target.value));
         this.fxToggle.addEventListener('click', () => this.toggleFX());
-        this.fadeInControl.addEventListener('input', (e) => this.setFadeIn(e.target.value));
-        this.fadeOutControl.addEventListener('input', (e) => this.setFadeOut(e.target.value));
     }
 
     loadAudio() {
@@ -379,7 +348,6 @@ class Aunode {
         this.isPlaying = true;
         this.playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
         this.updateProgressBar();
-        this.fadeControls.forEach(control => control.classList.add('disabled'));
     }
 
     pause() {
@@ -392,7 +360,6 @@ class Aunode {
         this.pauseTime = this.sound.seek();
         this.isPlaying = false;
         this.playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
-        this.fadeControls.forEach(control => control.classList.remove('disabled'));
     }
 
     setVolume(volume) {
@@ -417,15 +384,6 @@ class Aunode {
         } else {
             this.reverbGain.gain.setTargetAtTime(0, Howler.ctx.currentTime, 0.1);
         }
-    }
-
-    setFadeIn(duration) {
-        this.fadeInDuration = parseFloat(duration);
-        console.log(`Fade in duration set to: ${this.fadeInDuration} seconds`);
-    }
-
-    setFadeOut(duration) {
-        this.fadeOutDuration = parseFloat(duration);
     }
 
     updateProgressBar() {
