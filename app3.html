@@ -190,10 +190,16 @@
             transform: translate(2px, -50%);
         }
         .vibe-selector {
-            width: 33.33%;
-            float: left;
-            padding: 20px;
+            position: fixed;
+            top: 50%;
+            left: 20%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            padding: 10px;
             box-sizing: border-box;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            z-index: 1000;
         }
         .vibe-selector select {
             width: 100%;
@@ -204,6 +210,14 @@
             font-size: 1em;
             margin-bottom: 10px;
             border-radius: 20px;
+            text-align: center;
+            text-align-last: center;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+        .vibe-selector select::-ms-expand {
+            display: none;
         }
         .vibe-selector button {
             width: 100%;
@@ -218,6 +232,7 @@
         .vibe-selector button:hover {
             background-color: #A08C64;
         }
+
     </style>
 </head>
 <body>
