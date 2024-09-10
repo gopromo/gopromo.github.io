@@ -188,23 +188,30 @@
             transform: translate(2px, -50%);
         }
         .vibe-selector {
-            margin-bottom: 20px;
+            width: 33.33%;
+            float: left;
+            padding: 20px;
+            box-sizing: border-box;
         }
         .vibe-selector select {
+            width: 100%;
             background-color: #000000;
             color: #FFFFFF;
             border: 1px solid #C8AE7E;
-            padding: 5px 10px;
+            padding: 10px;
             font-size: 1em;
-            margin-right: 10px;
+            margin-bottom: 10px;
+            border-radius: 20px;
         }
         .vibe-selector button {
+            width: 100%;
             background-color: #C8AE7E;
-            color: #000000;
+            color: #FFFFFF;
             border: none;
-            padding: 5px 10px;
+            padding: 10px;
             font-size: 1em;
             cursor: pointer;
+            border-radius: 20px;
         }
         .vibe-selector button:hover {
             background-color: #A08C64;
@@ -215,6 +222,8 @@
     <div class="vibe-selector">
         <select id="vibe-dropdown">
             <option value="">Select a Vibe</option>
+            <option value='{"DisplayName":"Vibe 1","aunodes":[{"DisplayName":"File1","SourceFile":"C:\\Audio\\theme.mp3","isLast":false},{"DisplayName":"Choir Vibe","SourceFile":"C:\\Audio\\test.mp3","isLast":false}]}'>Vibe 1</option>
+            <option value='{"DisplayName":"Vibe 2","aunodes":[{"DisplayName":"Bells Vibe","SourceFile":"C:\\Audio\\test2.mp3","isLast":true}]}'>Vibe 2</option>
         </select>
         <button id="load-vibe">Load Vibe</button>
     </div>
@@ -429,9 +438,9 @@ class Aunode {
 }
 
 class Vibe {
-    constructor(DisplayName) {
+    constructor(DisplayName, aunodes = []) {
         this.DisplayName = DisplayName;
-        this.aunodes = [];
+        this.aunodes = aunodes;
     }
 
     addAunode(aunode) {
@@ -442,20 +451,35 @@ class Vibe {
 // Modify the DOMContentLoaded event listener
 document.addEventListener('DOMContentLoaded', (event) => {
     console.log("DOM fully loaded");
-    try {
-        // Create a Vibe instance
-        const mainVibe = new Vibe("Main Vibe");
-
-        // Instantiate instances of Aunode and add them to the Vibe
-        const aunode1 = new Aunode("File1", "C:\\Audio\\theme.mp3", false);
-        const aunode2 = new Aunode("Choir Vibe", "C:\\Audio\\test.mp3", false);
-        const aunode3 = new Aunode("Bells Vibe", "C:\\Audio\\test2.mp3", true);
-
-        console.log("Aunode instances created:", aunode1, aunode2, aunode3);
-    } catch (error) {
-        console.error("Error creating Aunode instances:", error);
-    }
+    
+    const loadVibeButton = document.getElementById('load-vibe');
+    const vibeDropdown = document.getElementById('vibe-dropdown');
+    
+    loadVibeButton.addEventListener('click', () => {
+        const selectedVibeValue = vibeDropdown.value;
+        if (selectedVibeValue) {
+            const vibeData = JSON.parse(selectedVibeValue);
+            loadVibe(vibeData);
+        } else {
+            console.log("No vibe selected");
+        }
+    });
 });
+
+function loadVibe(vibeData) {
+    console.log("Loading vibe:", vibeData.DisplayName);
+    
+    // Clear existing aunode instances
+    const aunodeInstancesContainer = document.getElementById('aunode-instances');
+    aunodeInstancesContainer.innerHTML = '';
+    
+    // Create Aunode instances based on the selected vibe
+    vibeData.aunodes.forEach((aunodeData, index) => {
+        const isLast = index === vibeData.aunodes.length - 1;
+        const aunode = new Aunode(aunodeData.DisplayName, aunodeData.SourceFile, isLast);
+        console.log("Aunode instance created:", aunode);
+    });
+}
 
 // Add this at the end of the script
 console.log("Script ended");
